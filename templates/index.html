@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MAS Trading Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>LLM-Enhanced Multi-Agent Trading System</h1>
+
+    <button id="startBtn">Start Simulation</button>
+
+    <div class="grid">
+        <div class="box">
+            <h3>Market Price Chart</h3>
+            <canvas id="chart"></canvas>
+        </div>
+        <div class="box">
+            <h3>Market News</h3>
+            <p id="news"></p>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="box">
+            <h3>Agent Decisions</h3>
+            <div id="decisions"></div>
+        </div>
+        <div class="box">
+            <h3>LLM Research & Decision Pipeline</h3>
+            <h4>Bullish Research</h4>
+            <pre id="bullish"></pre>
+
+            <h4>Bearish Research</h4>
+            <pre id="bearish"></pre>
+
+            <h4>LLM Proposal</h4>
+            <p id="llmProposal"></p>
+
+            <h4>Risk Assessments</h4>
+            <div id="riskAssessments"></div>
+
+            <h4>Manager Decision</h4>
+            <p id="managerDecision"></p>
+
+            <h4>LLM Fund Portfolio</h4>
+            <p id="llmPortfolio"></p>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
