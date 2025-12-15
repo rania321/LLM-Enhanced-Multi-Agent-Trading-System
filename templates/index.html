@@ -1,54 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>MAS Trading Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM-Enhanced Multi-Agent Trading Simulator</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <h1>LLM-Enhanced Multi-Agent Trading System</h1>
+    <!-- Animated Background -->
+    <div class="hero-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
 
-    <button id="startBtn">Start Simulation</button>
+    <!-- Hero Section -->
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <svg class="icon-badge" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+                AI-Powered Trading Research
+            </div>
+            
+            <h1 class="hero-title">
+                <span class="gradient-text">LLM-Enhanced</span><br>
+                Multi-Agent Trading Simulator
+            </h1>
+            
+            <p class="hero-description">
+                Experience the future of algorithmic trading with our advanced multi-agent system. 
+                Watch as AI-powered researchers, risk managers, and traders collaborate in real-time 
+                to make intelligent trading decisions.
+            </p>
 
-    <div class="grid">
-        <div class="box">
-            <h3>Market Price Chart</h3>
-            <canvas id="chart"></canvas>
-        </div>
-        <div class="box">
-            <h3>Market News</h3>
-            <p id="news"></p>
+            <button class="cta-button" onclick="goToDashboard()">
+                <span>Start Simulation</span>
+                <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
         </div>
     </div>
 
-    <div class="grid">
-        <div class="box">
-            <h3>Agent Decisions</h3>
-            <div id="decisions"></div>
-        </div>
-        <div class="box">
-            <h3>LLM Research & Decision Pipeline</h3>
-            <h4>Bullish Research</h4>
-            <pre id="bullish"></pre>
+    <!-- Features Section -->
+    <div class="features-section">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 2v20M2 12h20"/>
+                            <circle cx="12" cy="12" r="4"/>
+                        </svg>
+                    </div>
+                    <h3>Market Simulation</h3>
+                    <p>Real-time market environment with dynamic price movements and news sentiment analysis</p>
+                </div>
 
-            <h4>Bearish Research</h4>
-            <pre id="bearish"></pre>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>Multiple Trading Agents</h3>
+                    <p>Diverse strategies including trend following, mean reversion, and random trading patterns</p>
+                </div>
 
-            <h4>LLM Proposal</h4>
-            <p id="llmProposal"></p>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3>LLM Decision Pipeline</h3>
+                    <p>AI-powered research team with bullish/bearish analysts, risk committee, and portfolio manager</p>
+                </div>
 
-            <h4>Risk Assessments</h4>
-            <div id="riskAssessments"></div>
-
-            <h4>Manager Decision</h4>
-            <p id="managerDecision"></p>
-
-            <h4>LLM Fund Portfolio</h4>
-            <p id="llmPortfolio"></p>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 3v18h18"/>
+                            <path d="M18 17V9"/>
+                            <path d="M13 17V5"/>
+                            <path d="M8 17v-3"/>
+                        </svg>
+                    </div>
+                    <h3>Real-Time Analytics</h3>
+                    <p>Live performance tracking, portfolio comparison, and comprehensive risk management metrics</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="/static/app.js"></script>
+    <!-- Architecture Section -->
+    <div class="architecture-section">
+        <div class="container">
+            <h2 class="section-title">System Architecture</h2>
+            <div class="architecture-flow">
+                <div class="arch-box bullish">Bullish Researcher</div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box bearish">Bearish Researcher</div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box llm">LLM Trader</div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box risk">Risk Committee</div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box manager">Portfolio Manager</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/landing.js"></script>
 </body>
 </html>
