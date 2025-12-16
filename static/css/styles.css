@@ -775,7 +775,7 @@ body {
 
 .research-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 
@@ -783,6 +783,25 @@ body {
   padding: 1rem;
   border-radius: 8px;
   border: 2px solid;
+  /* Added min-height to ensure boxes are complete */
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.research-box h5 {
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.research-box pre {
+  flex: 1;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  overflow-y: auto;
 }
 
 .research-box.bullish-box {
@@ -795,17 +814,46 @@ body {
   border-color: #ef4444;
 }
 
-.research-box h5 {
-  font-size: 0.875rem;
-  font-weight: 600;
+.research-box.general-box {
+  background: #f0f4ff;
+  border-color: #667eea;
+}
+
+.general-stance {
   margin-bottom: 0.75rem;
 }
 
-.research-box pre {
+.stance-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
   font-size: 0.75rem;
-  line-height: 1.6;
-  white-space: pre-wrap;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stance-badge.bullish {
+  background: #d1fae5;
+  color: #10b981;
+}
+
+.stance-badge.bearish {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.stance-badge.neutral {
+  background: #e0e7ff;
+  color: #667eea;
+}
+
+.general-stance-history {
+  margin-bottom: 0.5rem;
+}
+
+.general-text {
   color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
 }
 
 .proposal-box,
@@ -850,6 +898,7 @@ body {
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  color: var(--text-primary);
 }
 
 .risk-card p {
@@ -900,313 +949,26 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
-  .hero-title {
-    font-size: 2.5rem;
-  }
-  .card-large,
-  .card-wide,
-  .card {
-    grid-column: span 12;
-  }
-  .research-grid,
-  .risk-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
-  .main-content {
-    margin-left: 0;
-    padding: 1rem;
-  }
-  .hero-title {
-    font-size: 2rem;
-  }
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-  .architecture-flow {
-    flex-direction: column;
-  }
-  .arch-arrow {
-    transform: rotate(90deg);
-  }
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Added history panel styles */
-.history-controls {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 200px;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.filter-select {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  background: var(--surface);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filter-select:focus {
-  outline: none;
-  border-color: var(--primary);
-}
-
-.btn-secondary {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--background);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-secondary:hover {
-  background: var(--border);
-}
-
-.history-timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-height: 800px;
-  overflow-y: auto;
-  padding-right: 0.5rem;
-}
-
-.history-timeline::-webkit-scrollbar {
-  width: 6px;
-}
-
-.history-timeline::-webkit-scrollbar-track {
-  background: var(--background);
-  border-radius: 3px;
-}
-
-.history-timeline::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-
-.history-timeline::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
-
-.history-step {
-  background: var(--background);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  transition: all 0.3s;
-}
-
-.history-step:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow);
-}
-
-.history-step-header {
-  padding: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--surface);
-  transition: all 0.2s;
-}
-
-.history-step-header:hover {
-  background: var(--background);
-}
-
-.history-step-title {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.history-step-number {
-  font-weight: 700;
-  color: var(--primary);
-  font-size: 1rem;
-}
-
-.history-price {
-  font-weight: 600;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
-.trade-indicator {
-  padding: 0.25rem 0.75rem;
-  background: #dbeafe;
-  color: #1e40af;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.chevron-icon {
-  width: 20px;
-  height: 20px;
-  stroke-width: 2;
-  color: var(--text-secondary);
-  transition: transform 0.3s;
-}
-
-.history-step-content {
-  display: none;
-  padding: 1.5rem;
-  border-top: 1px solid var(--border);
-}
-
-.history-section {
-  margin-bottom: 1.5rem;
-}
-
-.history-section:last-child {
-  margin-bottom: 0;
-}
-
-.history-section h5 {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.history-section p {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-.history-proposal {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.proposal-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.proposal-badge.buy {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.proposal-badge.sell {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.proposal-badge.hold {
-  background: #e0e7ff;
-  color: #3730a3;
-}
-
-.proposal-rationale {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  font-style: italic;
-  margin-top: 0.5rem;
-}
-
-.risk-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.risk-item {
-  padding: 0.5rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-}
-
-.risk-item.approved {
-  background: #f0fdf4;
-  color: #166534;
-}
-
-.risk-item.rejected {
-  background: #fef2f2;
-  color: #991b1b;
-}
-
-.decision-summary {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.decision-summary.approved {
-  background: #f0fdf4;
-  color: #166534;
-}
 
 .decision-summary.rejected {
   background: #fef2f2;
-  color: #991b1b;
+  border: 2px solid #ef4444;
+}
+
+.decision-summary.rejected {
+  color: #ef4444;
 }
 
 .portfolio-state {
   display: flex;
-  gap: 1.5rem;
-  padding: 0.75rem;
-  background: var(--surface);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  gap: 1rem;
   flex-wrap: wrap;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.portfolio-state span {
+  font-weight: 600;
 }
 
 .agents-summary {
@@ -1219,24 +981,230 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem;
-  background: var(--surface);
+  padding: 0.5rem 0.75rem;
+  background: var(--background);
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
 }
 
 .agent-name {
   font-weight: 600;
   color: var(--text-primary);
-  flex: 1;
 }
 
-.agent-summary-item .agent-action {
-  padding: 0.125rem 0.5rem;
-  margin: 0 0.5rem;
+.agent-value {
+  font-weight: 700;
+  color: #667eea;
 }
 
-.agent-summary-item .agent-value {
+/* Added trader history styles */
+.trader-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.trader-tab {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
   font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.trader-tab:hover {
+  background: var(--background);
   color: var(--text-primary);
+}
+
+.trader-tab.active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: white;
+  /* Enhanced active state with shadow */
+  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+}
+
+.trader-content {
+  display: none;
+  /* Added animation for smooth transitions */
+  animation: fadeIn 0.3s ease-out;
+}
+
+.trader-content.active {
+  display: block;
+}
+
+.trader-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  /* Updated gradient for better visual appeal */
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.trader-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Added padding and background for better separation */
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: 8px;
+}
+
+.trader-stat .stat-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  /* Added text transform for consistency */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trader-stat .stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.trader-stat .stat-value.positive {
+  color: #10b981;
+}
+
+.trader-stat .stat-value.negative {
+  color: #ef4444;
+}
+
+.trader-history-table {
+  overflow-x: auto;
+  /* Added border and shadow for better definition */
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.trader-history-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  /* Added white background */
+  background: var(--surface);
+}
+
+.trader-history-table thead {
+  /* Enhanced header with gradient */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.trader-history-table th {
+  padding: 1rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  /* Changed text color to white for contrast */
+  color: white;
+  border-bottom: 2px solid var(--border);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trader-history-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.trader-history-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.trader-history-table tbody tr:hover {
+  background: var(--background);
+  /* Added scale effect on hover */
+  transform: scale(1.01);
+}
+
+/* Added alternating row colors for better readability */
+.trader-history-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.action-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  /* Added inline-block for consistent sizing */
+  display: inline-block;
+  min-width: 50px;
+  text-align: center;
+}
+
+.trader-history-table .positive {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.trader-history-table .negative {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--background);
+  color: var(--text-primary);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Added history panel styles */
+.history-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 250px;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
 }

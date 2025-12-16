@@ -173,6 +173,14 @@
                                     <h5>📉 Bearish Evidence</h5>
                                     <pre id="bearishEvidence">Waiting...</pre>
                                 </div>
+                                <!-- Added GeneralResearchAgent display -->
+                                <div class="research-box general-box">
+                                    <h5>🔍 General Market Analysis</h5>
+                                    <div class="general-stance" id="generalStance">
+                                        <span class="stance-badge">NEUTRAL</span>
+                                    </div>
+                                    <pre id="generalEvidence">Waiting...</pre>
+                                </div>
                             </div>
                         </div>
 
@@ -218,6 +226,35 @@
                 </div>
             </div>
 
+            <!-- Simulation History -->
+            <div class="card card-full" id="historyCard" style="display: none;">
+                <div class="card-header">
+                    <h3>Simulation History</h3>
+                    <button class="btn-secondary" id="exportHistoryBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Export History
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="history-controls">
+                        <input type="text" id="historySearch" placeholder="Search history..." class="search-input">
+                        <select id="historyFilter" class="filter-select">
+                            <option value="all">All Steps</option>
+                            <option value="trades">Trades Only</option>
+                            <option value="llm">LLM Decisions</option>
+                            <option value="approved">Approved Trades</option>
+                        </select>
+                    </div>
+                    <div class="history-timeline" id="historyTimeline">
+                        <p class="text-muted">Simulation history will appear here after completion...</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Analytics Tabs -->
             <div class="card card-large">
                 <div class="card-header">
@@ -225,6 +262,7 @@
                     <div class="tabs">
                         <button class="tab active" data-tab="comparison">Agent Comparison</button>
                         <button class="tab" data-tab="actions">Action Distribution</button>
+                        <button class="tab" data-tab="performance">Performance History</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -233,6 +271,32 @@
                     </div>
                     <div class="tab-content" id="actionsTab">
                         <canvas id="actionsChart"></canvas>
+                    </div>
+                    <div class="tab-content" id="performanceTab">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Added individual trader history cards -->
+            <div class="card card-full" id="traderHistoryCard" style="display: none;">
+                <div class="card-header">
+                    <h3>Individual Trader Performance History</h3>
+                    <button class="btn-secondary" id="exportTradersBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Export Trader Data
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="trader-tabs" id="traderTabs">
+                        <!-- Trader tabs will be generated here -->
+                    </div>
+                    <div class="trader-history-content" id="traderHistoryContent">
+                        <!-- Trader history will be displayed here -->
                     </div>
                 </div>
             </div>

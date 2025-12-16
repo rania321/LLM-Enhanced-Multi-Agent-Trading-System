@@ -7,6 +7,10 @@ from agents import RandomTrader, TrendTrader, MeanReversionTrader, HoldTrader
 from llm_module import call_llm
 
 
+# =========================
+# Data structures
+# =========================
+
 @dataclass
 class Portfolio:
     cash: float = 1000.0
@@ -45,15 +49,21 @@ class ManagerDecision:
     comment: str
 
 
+# =========================
+# Research Agents
+# =========================
+
 class BullishResearcher:
     def analyze(self, obs: Dict) -> Evidence:
         price = obs["price"]
         h = obs["history"]
         news = obs["news"]
+
         if len(h) >= 2 and h[-1] > h[-2]:
             trend = "Recent price trend is upward."
         else:
             trend = "Price may recover from recent levels."
+
         text = (
             f"- Current price: {price:.2f}\n"
             f"- {trend}\n"
@@ -68,10 +78,12 @@ class BearishResearcher:
         price = obs["price"]
         h = obs["history"]
         news = obs["news"]
+
         if len(h) >= 2 and h[-1] < h[-2]:
             trend = "Recent price trend is downward."
         else:
             trend = "Price may be overvalued vs. recent history."
+
         text = (
             f"- Current price: {price:.2f}\n"
             f"- {trend}\n"
@@ -81,11 +93,57 @@ class BearishResearcher:
         return Evidence("bearish", text)
 
 
+class GeneralResearchAgent:
+    """
+    Neutral LLM-based research agent.
+    Provides a balanced market analysis.
+    """
+
+    def analyze(self, obs: Dict) -> Evidence:
+        prompt = f"""
+You are a senior financial market analyst.
+
+Market data:
+- Current price: {obs['price']:.2f}
+- Recent price history: {obs['history'][-10:]}
+- News: {obs['news']}
+
+Task:
+1. Analyze the overall market situation.
+2. Indicate whether the market is BULLISH, BEARISH, or NEUTRAL.
+3. Give a short explanation (2–3 sentences).
+
+Return format:
+STANCE: <BULLISH / BEARISH / NEUTRAL>
+ANALYSIS: <short explanation>
+"""
+        raw = call_llm(prompt)
+
+        stance = "neutral"
+        up = raw.upper()
+        if "BULLISH" in up:
+            stance = "bullish"
+        elif "BEARISH" in up:
+            stance = "bearish"
+
+        return Evidence(stance=stance, text=raw)
+
+
+# =========================
+# LLM Trader Agent
+# =========================
+
 class LLMTraderAgent:
     def __init__(self):
         self.portfolio = Portfolio()
 
-    def build_prompt(self, obs: Dict, bull: Evidence, bear: Evidence) -> str:
+    def build_prompt(
+        self,
+        obs: Dict,
+        bull: Evidence,
+        bear: Evidence,
+        general: Evidence
+    ) -> str:
         price = obs["price"]
         h = obs["history"]
         hist_str = ", ".join(f"{p:.2f}" for p in h)
@@ -98,16 +156,22 @@ Market context:
 - Recent prices: [{hist_str}]
 - News: {obs['news']}
 
-Bullish research team:
+Bullish research:
 {bull.text}
 
-Bearish research team:
+Bearish research:
 {bear.text}
+
+General market analysis:
+{general.text}
 
 Task:
 1. Decide a trading ACTION among: BUY, SELL, HOLD.
 2. Choose a position SIZE between 0 and 3 (integer).
 3. Explain your decision in one short sentence.
+
+IMPORTANT RULE:
+- If ACTION is HOLD, SIZE must be 0.
 
 Return exactly this format:
 ACTION: <BUY/SELL/HOLD>
@@ -116,8 +180,15 @@ REASON: <short text>
 """
         return prompt
 
-    def propose_trade(self, obs: Dict, bull: Evidence, bear: Evidence) -> TradeProposal:
-        prompt = self.build_prompt(obs, bull, bear)
+    def propose_trade(
+        self,
+        obs: Dict,
+        bull: Evidence,
+        bear: Evidence,
+        general: Evidence
+    ) -> TradeProposal:
+
+        prompt = self.build_prompt(obs, bull, bear, general)
         raw = call_llm(prompt)
 
         action = "HOLD"
@@ -138,16 +209,30 @@ REASON: <short text>
                 if digits:
                     size = int(digits)
 
+        # Safety clamp
+        if action == "HOLD":
+            size = 0
         size = max(0, min(size, 3))
+
         return TradeProposal(action=action.lower(), size=size, rationale=rationale)
 
+
+# =========================
+# Risk, Manager, Execution
+# =========================
 
 class RiskAgent:
     def __init__(self, name: str, level: str):
         self.name = name
         self.level = level  # "aggressive", "neutral", "conservative"
 
-    def evaluate(self, proposal: TradeProposal, portfolio: Portfolio, price: float) -> RiskAssessment:
+    def evaluate(
+        self,
+        proposal: TradeProposal,
+        portfolio: Portfolio,
+        price: float
+    ) -> RiskAssessment:
+
         trade_value = proposal.size * price
         total = portfolio.value(price)
         fraction = trade_value / total if total > 0 else 0.0
@@ -162,12 +247,14 @@ class RiskAgent:
                 comment += "trade large, scaling down slightly."
             else:
                 comment += "size acceptable."
+
         elif self.level == "neutral":
             if fraction > 0.25:
                 suggested_size = max(0, int(0.25 * total // price))
                 comment += "trade too big, scaling to medium size."
             else:
                 comment += "size fine."
+
         else:  # conservative
             if fraction > 0.10:
                 approved = False
@@ -181,44 +268,72 @@ class RiskAgent:
 
 class ManagerAgent:
     """
-    Majorité + taille médiane (option 2).
+    Majority vote + median size rule.
     """
 
-    def decide(self, proposal: TradeProposal, assessments: List[RiskAssessment]) -> ManagerDecision:
+    def decide(
+        self,
+        proposal: TradeProposal,
+        assessments: List[RiskAssessment]
+    ) -> ManagerDecision:
+
         approvals = sum(1 for a in assessments if a.approved)
+
         if approvals >= 2 and proposal.action != "hold" and proposal.size > 0:
             sizes = sorted(a.suggested_size for a in assessments)
             median_size = sizes[1]
+
             if median_size <= 0:
-                return ManagerDecision(False, "hold", 0, "Median size is zero, downgraded to HOLD.")
+                return ManagerDecision(
+                    False, "hold", 0,
+                    "Median size is zero, downgraded to HOLD."
+                )
+
             return ManagerDecision(
                 True,
                 proposal.action,
                 median_size,
                 f"Approved by {approvals}/3 risk agents. Final size={median_size}."
             )
-        return ManagerDecision(False, "hold", 0, "Proposal rejected or downgraded to HOLD.")
+
+        return ManagerDecision(
+            False, "hold", 0,
+            "Proposal rejected or downgraded to HOLD."
+        )
 
 
 class ExecutionAgent:
-    def execute(self, decision: ManagerDecision, portfolio: Portfolio, price: float):
+    def execute(
+        self,
+        decision: ManagerDecision,
+        portfolio: Portfolio,
+        price: float
+    ):
         if not decision.approved or decision.final_action == "hold" or decision.final_size == 0:
             return
+
         q = decision.final_size
+
         if decision.final_action == "buy":
             cost = q * price
             if portfolio.cash >= cost:
                 portfolio.cash -= cost
                 portfolio.position += q
+
         elif decision.final_action == "sell":
             if portfolio.position >= q:
                 portfolio.cash += q * price
                 portfolio.position -= q
 
 
+# =========================
+# Simulation
+# =========================
+
 class Simulation:
     def __init__(self):
         self.market = MarketEnvironment()
+
         self.traders = [
             RandomTrader("Random"),
             TrendTrader("Trend"),
@@ -228,12 +343,16 @@ class Simulation:
 
         self.bull = BullishResearcher()
         self.bear = BearishResearcher()
+        self.general = GeneralResearchAgent()
+
         self.llm_trader = LLMTraderAgent()
+
         self.risk_team = [
             RiskAgent("AggressiveRisk", "aggressive"),
             RiskAgent("NeutralRisk", "neutral"),
             RiskAgent("ConservativeRisk", "conservative"),
         ]
+
         self.manager = ManagerAgent()
         self.executor = ExecutionAgent()
 
@@ -242,7 +361,7 @@ class Simulation:
         obs = self.market.get_obs()
         price = obs["price"]
 
-        # 1) Traders classiques
+        # 1) Classic traders
         decisions = []
         for t in self.traders:
             action = t.decide(obs)
@@ -255,18 +374,30 @@ class Simulation:
                 "value": round(t.portfolio_value(price), 2),
             })
 
-        # 2) Pipeline LLM Fund
+        # 2) LLM Fund pipeline
         bull_ev = self.bull.analyze(obs)
         bear_ev = self.bear.analyze(obs)
+        general_ev = self.general.analyze(obs)
 
-        proposal = self.llm_trader.propose_trade(obs, bull_ev, bear_ev)
-        assessments = [r.evaluate(proposal, self.llm_trader.portfolio, price) for r in self.risk_team]
+        proposal = self.llm_trader.propose_trade(
+            obs, bull_ev, bear_ev, general_ev
+        )
+
+        assessments = [
+            r.evaluate(proposal, self.llm_trader.portfolio, price)
+            for r in self.risk_team
+        ]
+
         decision = self.manager.decide(proposal, assessments)
         self.executor.execute(decision, self.llm_trader.portfolio, price)
 
         llm_info = {
             "bullish": bull_ev.text,
             "bearish": bear_ev.text,
+            "general_analysis": {
+                "stance": general_ev.stance,
+                "text": general_ev.text,
+            },
             "proposal": {
                 "action": proposal.action,
                 "size": proposal.size,
